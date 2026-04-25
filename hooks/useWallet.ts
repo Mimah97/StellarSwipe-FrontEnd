@@ -6,7 +6,7 @@ import {
   requestAccess,
 } from "@stellar/freighter-api";
 import { useWalletStore } from "@/store/useWalletStore";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 
 export function useWallet() {
   const { publicKey, isConnected: connected, setPublicKey, setConnected, disconnect } =
@@ -14,8 +14,8 @@ export function useWallet() {
 
   async function connect() {
     try {
-      const freighterConnected = await isConnected();
-      if (!freighterConnected) {
+      const connectedResponse = await isConnected();
+      if (!connectedResponse?.isConnected) {
         toast.error("Freighter wallet not found. Please install it.");
         return;
       }
