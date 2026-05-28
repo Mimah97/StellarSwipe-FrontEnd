@@ -10,6 +10,7 @@ import {
 import { TrendingUp, TrendingDown, Minus, X, Zap, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SignalBadge } from "@/components/SignalBadge";
+import { StakeBadge } from "@/components/StakeBadge";
 import { SignalTimestamp } from "@/components/SignalTimestamp";
 import { TradeSkeleton } from "@/components/TradeSkeleton";
 import { TradeModal } from "@/components/TradeModal";
@@ -31,6 +32,8 @@ interface SignalCardProps {
   analysis?: string;
   signal?: "BUY" | "SELL";
   timestamp?: Date;
+  providerStake?: number;
+  providerReputation?: number;
   onTrade?: (price: number) => void;
   onPass?: () => void;
 }
@@ -52,6 +55,8 @@ export function SignalCard({
   analysis = "Momentum building after a strong volume breakout above the 50-day MA. RSI at 62 with room to run.",
   signal = "BUY",
   timestamp = new Date(Date.now() - 5 * 60 * 1000),
+  providerStake,
+  providerReputation,
   onTrade,
   onPass,
 }: SignalCardProps) {
@@ -157,9 +162,14 @@ export function SignalCard({
             role="article"
             aria-label={`${signal} signal for ${pair} at ${executionPrice} with ${confidence}% confidence`}
           >
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-2 flex-wrap">
               <span className="font-semibold text-base sm:text-lg">{pair}</span>
-              <SignalBadge signal={signal} />
+              <div className="flex items-center gap-2">
+                <SignalBadge signal={signal} />
+                {(providerStake || providerReputation) && (
+                  <StakeBadge stake={providerStake} reputation={providerReputation} />
+                )}
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3 text-sm">

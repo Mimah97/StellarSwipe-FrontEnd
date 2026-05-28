@@ -154,7 +154,12 @@ export default function AppPage() {
 
         {/* Signal Card demo */}
         <div className="flex w-full max-w-md flex-col items-center gap-3 px-4 sm:px-0">
-          <SignalCard loading={loading} onTrade={handleTrade} />
+          <SignalCard
+            loading={loading}
+            onTrade={handleTrade}
+            providerStake={50000}
+            providerReputation={85}
+          />
           <div className="flex gap-3">
             <button
               onClick={toggleLoading}

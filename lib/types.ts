@@ -9,6 +9,8 @@ export interface Signal {
   analysis: string; // technical analysis copy — can be long
   tags?: string[];
   providerId?: string;
+  providerStake?: number;
+  providerReputation?: number;
 }
 
 export interface SignalProvider {
