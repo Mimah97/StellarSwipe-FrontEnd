@@ -15,6 +15,7 @@ import { SignalCard } from "@/components/SignalCard";
 import { WalletDropdown } from "@/components/WalletDropdown";
 import { PageTransition } from "@/components/PageTransition";
 import { PortfolioAllocationChart } from "@/components/chart/PortfolioAllocationChart";
+import { PnLWidget } from "@/components/chart/PnLWidget";
 
 export default function AppPage() {
   const { publicKey, connected, disconnect } = useWallet();
@@ -144,6 +145,11 @@ export default function AppPage() {
         {/* Portfolio Allocation Chart */}
         <div className="w-full max-w-md">
           <PortfolioAllocationChart />
+        </div>
+
+        {/* P&L Widget */}
+        <div className="w-full max-w-md">
+          <PnLWidget />
         </div>
 
         {/* Signal Card demo */}
