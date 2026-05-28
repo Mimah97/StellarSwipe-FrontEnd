@@ -14,6 +14,8 @@ import { SignalTimestamp } from "@/components/SignalTimestamp";
 import { TradeSkeleton } from "@/components/TradeSkeleton";
 import { TradeModal } from "@/components/TradeModal";
 import { cn } from "@/lib/utils";
+import { MiniChart } from "./chart/MiniChart";
+import { useDemoModeStore } from "@/store/useDemoModeStore";
 
 interface ROIPoint {
   value: number;
@@ -55,6 +57,7 @@ export function SignalCard({
 }: SignalCardProps) {
   const [dismissed, setDismissed] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const { isDemoMode } = useDemoModeStore();
   const executingRef = useRef(false);
 
   const x = useMotionValue(0);
@@ -184,7 +187,7 @@ export function SignalCard({
               <DirectionIcon size={16} className={cn(
                 signal === "BUY" ? "text-green-600" : signal === "SELL" ? "text-red-600" : "text-gray-500"
               )} />
-              <MiniROIChart data={roiHistory} />
+              <MiniChart data={roiHistory.map(p => p.value)} className="flex-1" />
             </div>
 
             <p className="text-sm text-muted-foreground leading-relaxed">{analysis}</p>
@@ -212,10 +215,10 @@ export function SignalCard({
                 onClick={handleExecuteTrade}
                 disabled={modalOpen}
                 className="flex-1 active:scale-95"
-                aria-label={`Execute trade: ${signal} signal for ${pair} at ${executionPrice}`}
+                aria-label={`Execute trade: ${signal} signal for ${pair} at ${executionPrice}${isDemoMode ? " (demo)" : ""}`}
               >
                 <Zap size={16} className="mr-1" />
-                Execute Trade
+                {isDemoMode ? "Demo Trade" : "Execute Trade"}
               </Button>
             </div>
           </article>
