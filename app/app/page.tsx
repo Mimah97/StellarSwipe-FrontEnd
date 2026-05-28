@@ -15,6 +15,7 @@ import { SignalCard } from "@/components/SignalCard";
 import { WalletDropdown } from "@/components/WalletDropdown";
 import { PageTransition } from "@/components/PageTransition";
 import { PortfolioAllocationChart } from "@/components/chart/PortfolioAllocationChart";
+import { PortfolioSummaryCards } from "@/components/PortfolioSummaryCards";
 
 export default function AppPage() {
   const { publicKey, connected, disconnect } = useWallet();
@@ -141,9 +142,12 @@ export default function AppPage() {
           )}
         </div>
 
-        {/* Portfolio Allocation Chart */}
-        <div className="w-full max-w-md">
-          <PortfolioAllocationChart />
+        {/* Portfolio Summary + Allocation */}
+        <div className="w-full max-w-md space-y-3">
+          <PortfolioSummaryCards />
+          <div>
+            <PortfolioAllocationChart />
+          </div>
         </div>
 
         {/* Signal Card demo */}

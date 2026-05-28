@@ -69,6 +69,13 @@ export function TradeModal({ open, onClose, onConfirm, walletBalance = 250, mark
   const networkFee = "0.00001 XLM";
   const priceImpact = type === "MARKET" ? "~0.12%" : "~0.05%";
   const execMethod = type === "MARKET" ? "AMM Swap" : "Order Book";
+  // Fee calculations (demo / illustrative): trade fee % depends on order type
+  const tradeFeePercent = type === "MARKET" ? 0.0035 : 0.002; // 0.35% market, 0.2% limit
+  const tradeFee = total * tradeFeePercent;
+  // parse network fee (XLM) and convert to USDC using price if available
+  const parsedNetworkFeeXLM = parseFloat(networkFee.split(" ")[0]) || 0;
+  const networkFeeUSDC = parsedNetworkFeeXLM * (marketPrice || price || 0);
+  const netAmount = Math.max(0, total - tradeFee - networkFeeUSDC);
 
   return (
     <AnimatePresence>
@@ -195,6 +202,28 @@ export function TradeModal({ open, onClose, onConfirm, walletBalance = 250, mark
                 </div>
               </div>
 
+              {/* Low balance alert with top-up CTA */}
+              {insufficient && (
+                <div className="mt-2 rounded-md border border-accent-danger/40 bg-accent-danger/10 p-3 text-sm">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="font-medium text-accent-danger">Low balance</p>
+                      <p className="text-foreground-muted text-xs mt-1">You do not have enough funds to place this trade.</p>
+                    </div>
+                    <div className="flex-shrink-0">
+                      <a
+                        href="https://www.stellar.org/lumens/"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center rounded-md bg-accent-market px-3 py-1 text-xs font-medium text-foreground hover:opacity-90"
+                      >
+                        Top up
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Stop-loss slider */}
               <div>
                 <div className="flex justify-between text-xs text-foreground-muted mb-1">
@@ -241,6 +270,21 @@ export function TradeModal({ open, onClose, onConfirm, walletBalance = 250, mark
                 <span id="position-limit-help" className="sr-only">
                   Position limit helps manage risk by limiting the size of your position
                 </span>
+              </div>
+            </div>
+            {/* Fee breakdown */}
+            <div className="mt-4 rounded-lg bg-white/3 border border-white/6 px-3 py-3 text-sm sm:px-4">
+              <div className="flex items-center justify-between">
+                <span className="text-foreground-subtle">Trade fee ({(tradeFeePercent * 100).toFixed(2)}%)</span>
+                <span className="font-mono font-medium">${tradeFee.toFixed(4)}</span>
+              </div>
+              <div className="flex items-center justify-between mt-2">
+                <span className="text-foreground-subtle">Network fee</span>
+                <span className="font-mono font-medium">{networkFee} (~${networkFeeUSDC.toFixed(6)})</span>
+              </div>
+              <div className="flex items-center justify-between mt-2 border-t pt-2">
+                <span className="text-foreground-subtle">Net amount</span>
+                <span className="font-mono font-medium">${netAmount.toFixed(4)}</span>
               </div>
             </div>
 
