@@ -8,4 +8,16 @@ export interface Signal {
   timestamp: string;
   analysis: string; // technical analysis copy — can be long
   tags?: string[];
+  providerId?: string;
+}
+
+export interface SignalProvider {
+  id: string;
+  address: string;
+  name?: string;
+  overallScore: number; // 0–100
+  winRate: number; // 0–100
+  totalSignals: number;
+  recentPerformance: number; // percentage
+  rank: number;
 }
