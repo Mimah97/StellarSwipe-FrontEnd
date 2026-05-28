@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { useWallet } from "@/hooks/useWallet";
 import { useSignals } from "@/hooks/useSignals";
-import { useSignalFilterStore } from "@/store/useSignalFilterStore";
+import { usePortfolio } from "@/hooks/usePortfolio";
 import { Button } from "@/components/ui/button";
 import { SignalErrorState } from "@/components/SignalErrorState";
 import { SignalFeedFilters } from "@/components/SignalFeedFilters";
@@ -14,12 +14,12 @@ import { WalletSelectionModal } from "@/components/WalletSelectionModal";
 import { SignalCard } from "@/components/SignalCard";
 import { WalletDropdown } from "@/components/WalletDropdown";
 import { PageTransition } from "@/components/PageTransition";
+import { PortfolioAllocationChart } from "@/components/chart/PortfolioAllocationChart";
 
 export default function AppPage() {
   const { publicKey, connected, disconnect } = useWallet();
   const { data: signals, isLoading, error, refetch } = useSignals();
-  const { direction, asset, provider } = useSignalFilterStore();
-
+  const { assets } = usePortfolio();
   const [modalOpen, setModalOpen] = useState(false);
   const [walletModalOpen, setWalletModalOpen] = useState(false);
   const [marketPrice, setMarketPrice] = useState(0.4821);
@@ -98,7 +98,7 @@ export default function AppPage() {
         <header className="w-full max-w-md flex items-center justify-between">
           <h1 className="text-xl font-bold tracking-tight text-white">StellarSwipe</h1>
           <div className="flex items-center gap-3">
-            <p className="text-sm text-foreground-muted font-mono hidden sm:block">
+            <p className="text-sm text-foreground-muted font-mono">
               {publicKey?.slice(0, 8)}...{publicKey?.slice(-8)}
             </p>
             <WalletDropdown />
@@ -106,35 +106,32 @@ export default function AppPage() {
         </header>
 
         {/* Signal Feed */}
-        <div className="w-full max-w-md flex flex-col gap-4">
-          {/* Filter controls */}
-          <SignalFeedFilters availableAssets={availableAssets} />
-
+        <div className="w-full max-w-md">
           {isLoading && (
             <div className="flex justify-center py-10">
               <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
             </div>
           )}
 
-          {error && <SignalErrorState error={error as Error} onRetry={refetch} />}
-
-          {!isLoading && !error && filteredSignals.length === 0 && (
-            <p className="text-center text-sm text-muted-foreground py-6">
-              {signals && signals.length > 0
-                ? "No signals match the current filters."
-                : "No signals available."}
-            </p>
+          {error && (
+            <SignalErrorState error={error as Error} onRetry={refetch} />
           )}
 
-          {filteredSignals.length > 0 && (
-            <ul className="flex flex-col gap-3" aria-label="Signal feed">
-              {filteredSignals.map((signal) => (
+          {signals && signals.length === 0 && (
+            <p className="text-center text-sm text-muted-foreground">No signals available.</p>
+          )}
+
+          {signals && signals.length > 0 && (
+            <ul className="flex flex-col gap-3">
+              {signals.map((signal) => (
                 <li
                   key={signal.id}
                   className="rounded-xl border p-4 text-sm flex justify-between items-center"
                 >
                   <span className="font-medium">{signal.asset}</span>
-                  <span className={signal.action === "BUY" ? "text-green-500" : "text-red-500"}>
+                  <span
+                    className={signal.action === "BUY" ? "text-green-500" : "text-red-500"}
+                  >
                     {signal.action}
                   </span>
                   <span className="text-muted-foreground">{signal.confidence}%</span>
@@ -142,6 +139,11 @@ export default function AppPage() {
               ))}
             </ul>
           )}
+        </div>
+
+        {/* Portfolio Allocation Chart */}
+        <div className="w-full max-w-md">
+          <PortfolioAllocationChart />
         </div>
 
         {/* Signal Card demo */}

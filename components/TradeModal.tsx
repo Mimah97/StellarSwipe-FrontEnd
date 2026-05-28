@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Info } from "lucide-react";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
+import { useDemoModeStore } from "@/store/useDemoModeStore";
 
 type OrderType = "LIMIT" | "MARKET";
 
@@ -34,6 +35,7 @@ export function TradeModal({ open, onClose, onConfirm, walletBalance = 250, mark
   const [positionLimit, setPositionLimit] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [touched, setTouched] = useState({ limitPrice: false, amount: false });
+  const { isDemoMode } = useDemoModeStore();
 
   const limitPriceError = type === "LIMIT" && touched.limitPrice ? validateField(limitPrice, "Limit price") : "";
   const amountError = touched.amount ? validateField(amount, "Amount") : "";
@@ -101,8 +103,13 @@ export function TradeModal({ open, onClose, onConfirm, walletBalance = 250, mark
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
           >
             {/* Header */}
-            <div className="flex items-center justify-between mb-5">
-              <h2 className="text-lg font-semibold text-foreground">Place Order</h2>
+            <div className="mb-5 flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-semibold text-foreground">Place Order</h2>
+                {isDemoMode && (
+                  <span className="text-xs text-blue-400 font-medium">Demo Mode</span>
+                )}
+              </div>
               <button
                 onClick={onClose}
                 aria-label="Close modal"
