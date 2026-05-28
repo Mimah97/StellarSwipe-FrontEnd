@@ -6,7 +6,7 @@ interface UseFocusTrapOptions {
 }
 
 export function useFocusTrap({ isActive, initialFocus }: UseFocusTrapOptions) {
-  const containerRef = useRef<HTMLElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const previousActiveElement = useRef<Element | null>(null);
 
   useEffect(() => {
