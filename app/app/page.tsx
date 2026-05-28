@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { useWallet } from "@/hooks/useWallet";
 import { useSignals } from "@/hooks/useSignals";
+import { usePortfolio } from "@/hooks/usePortfolio";
 import { Button } from "@/components/ui/button";
 import { SignalErrorState } from "@/components/SignalErrorState";
 import { Loader2 } from "lucide-react";
@@ -12,15 +13,12 @@ import { WalletSelectionModal } from "@/components/WalletSelectionModal";
 import { SignalCard } from "@/components/SignalCard";
 import { WalletDropdown } from "@/components/WalletDropdown";
 import { PageTransition } from "@/components/PageTransition";
-import { DemoModeToggle } from "@/components/DemoModeToggle";
-import { DemoModeCallout } from "@/components/DemoModeCallout";
-import { useDemoModeStore } from "@/store/useDemoModeStore";
 import { PortfolioAllocationChart } from "@/components/chart/PortfolioAllocationChart";
 
 export default function AppPage() {
   const { publicKey, connected, disconnect } = useWallet();
   const { data: signals, isLoading, error, refetch } = useSignals();
-  const { isDemoMode } = useDemoModeStore();
+  const { assets } = usePortfolio();
   const [modalOpen, setModalOpen] = useState(false);
   const [walletModalOpen, setWalletModalOpen] = useState(false);
   const [marketPrice, setMarketPrice] = useState(0.4821);
@@ -84,13 +82,9 @@ export default function AppPage() {
             <p className="text-sm text-foreground-muted font-mono">
               {publicKey?.slice(0, 8)}...{publicKey?.slice(-8)}
             </p>
-            <DemoModeToggle />
             <WalletDropdown />
           </div>
         </header>
-
-        {/* Demo Mode Callout */}
-        {isDemoMode && <DemoModeCallout />}
 
         {/* Signal Feed */}
         <div className="w-full max-w-md">
