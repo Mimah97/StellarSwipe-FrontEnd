@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { useWallet } from "@/hooks/useWallet";
 import { useSignals } from "@/hooks/useSignals";
 import { usePortfolio } from "@/hooks/usePortfolio";
 import { Button } from "@/components/ui/button";
 import { SignalErrorState } from "@/components/SignalErrorState";
+import { SignalFeedFilters } from "@/components/SignalFeedFilters";
 import { Loader2 } from "lucide-react";
 import { TradeModal } from "@/components/TradeModal";
 import { WalletSelectionModal } from "@/components/WalletSelectionModal";
@@ -34,6 +35,22 @@ export default function AppPage() {
     setTimeout(() => setLoading(false), 2500);
   };
 
+  // Derive unique assets and providers for filter dropdowns
+  const availableAssets = useMemo(
+    () => [...new Set((signals ?? []).map((s) => s.asset).filter(Boolean))].sort(),
+    [signals]
+  );
+
+  // Filter signals based on active filters
+  const filteredSignals = useMemo(() => {
+    if (!signals) return [];
+    return signals.filter((s) => {
+      if (direction !== "ALL" && s.action !== direction) return false;
+      if (asset && s.asset.toUpperCase() !== asset.toUpperCase()) return false;
+      return true;
+    });
+  }, [signals, direction, asset, provider]);
+
   if (!connected) {
     return (
       <PageTransition>
@@ -44,7 +61,9 @@ export default function AppPage() {
             transition={{ duration: 0.5 }}
             className="relative text-center"
           >
-            <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl md:text-4xl">StellarSwipe</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl md:text-4xl">
+              StellarSwipe
+            </h1>
             <p className="mt-2 text-gray-400">Connect your Freighter wallet to get started</p>
           </motion.div>
 
